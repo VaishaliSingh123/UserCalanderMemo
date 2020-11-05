@@ -1,8 +1,10 @@
 package com.example.userCalanderShedule.controller;
 
+import com.example.userCalanderShedule.Sevice.MemoService;
 import com.example.userCalanderShedule.exceptionHelper.InvalidInputException;
 import com.example.userCalanderShedule.exceptionHelper.UserException;
 import com.example.userCalanderShedule.model.MemoModel;
+import com.example.userCalanderShedule.model.SingleUserMemoCalander;
 import com.example.userCalanderShedule.model.UserMemoModel;
 import com.example.userCalanderShedule.repository.UserMemoRepository;
 import com.example.userCalanderShedule.repository.UserRepository;
@@ -25,6 +27,9 @@ public class UserMemoController {
     @Autowired
     UserMemoRepository userMemoRepository;
 
+    @Autowired
+    MemoService memoService;
+
 
 
 
@@ -32,43 +37,32 @@ public class UserMemoController {
     public ResponseEntity<UserMemoModel> addMemo(@RequestHeader(name="userId")Integer userId, @RequestBody UserMemoModel userMemoModel) throws UserException {
 
     try {
-        if(userId<1){
-            throw new InvalidInputException("wrong input");
-        }else {
-            Optional user = userRepository.findById(userId);
-
-            if (user.isPresent()) {
-                UserMemoModel userMemoModel1 = new UserMemoModel.UserMemoBuilder().userId(userId).date(userMemoModel.getDate())
-                        .start(userMemoModel.getStart())
-                        .end(userMemoModel.getEnd())
-                        .memo(userMemoModel.getMemo()).build();
-
-                return ResponseEntity.ok(userMemoRepository.save(userMemoModel1));
-
-
-            }
-        }
-
+        return ResponseEntity.ok(memoService.addMemoService(userId,userMemoModel));
     }catch (InvalidInputException ex){
         throw new InvalidInputException("wrong input");
     }catch (Exception ex){
         throw new UserException(ex.toString());
     }
-    return null;
 }
-@GetMapping(path="get-user-memo")
-    public ResponseEntity<List<MemoModel>> getAllMemoOfUser(@RequestHeader(name="userId")Integer userId){
 
-     List<UserMemoModel> userMemoModeList=  userMemoRepository.findMemoByUserId(userId);
 
-     List<MemoModel> memoList=new ArrayList<MemoModel>();
+@GetMapping(path="get-user-memo-list")
+    public ResponseEntity<List<MemoModel>> getAllMemoOfUser(@RequestHeader(name="userId")Integer userId) throws UserException {
 
-    for(UserMemoModel memo:userMemoModeList){
-       System.out.println(memo);
-       memoList.add(new MemoModel(memo.getMemo().toString()));
+      return new ResponseEntity(memoService.getAllMemoOfUserService(userId),HttpStatus.OK);
     }
 
-    return new ResponseEntity(memoList,HttpStatus.OK);
-}
+@PostMapping(path="get-user-date-memo")
+    public ResponseEntity<SingleUserMemoCalander> getUserDateMemoList(@RequestHeader(name="userId")Integer userId, @RequestBody  UserMemoModel userMemoModel) throws UserException {
+       try {
+           memoService.getUserDateMemoListService(userId,userMemoModel);
+
+           return new ResponseEntity(memoService.getUserDateMemoListService(userId,userMemoModel),HttpStatus.OK);
+       }catch (Exception ex){
+           throw new UserException("user Exception");
+       }
+
+
+    }
 
 }

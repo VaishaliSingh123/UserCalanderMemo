@@ -20,14 +20,14 @@ public class UserMemoModel {
 
     private Integer userId;
 
-    @NonNull
-    private Date date;
+   // @NonNull
+  //  private Date date;
 
     @NonNull
-    private Timestamp start;
+    private Date start;
 
     @NonNull
-    private Timestamp end;
+    private Date end;
 
     @NonNull
     private String memo;
@@ -38,15 +38,15 @@ public class UserMemoModel {
         return userId;
     }
 
-    public Date getDate() {
+   /* public Date getDate() {
         return date;
-    }
+    }*/
 
-    public Timestamp getStart() {
+    public Date getStart() {
         return start;
     }
 
-    public Timestamp getEnd() {
+    public Date getEnd() {
         return end;
     }
 
@@ -57,9 +57,9 @@ public class UserMemoModel {
     public static class UserMemoBuilder{
         private Integer id;
         private Integer userId;
-        private Date date;
-        private Timestamp start;
-        private Timestamp end;
+       // private Date date;
+        private Date start;
+        private Date end;
         private String memo;
 
         public UserMemoBuilder id(Integer id){
@@ -71,15 +71,15 @@ public class UserMemoModel {
             this.userId=userId;
             return this;
         }
-        public UserMemoBuilder date(Date date){
+       /* public UserMemoBuilder date(Date date){
             this.date=date;
             return  this;
-        }
-        public UserMemoBuilder start(Timestamp start){
+        }*/
+        public UserMemoBuilder start(Date start){
             this.start=start;
             return this;
         }
-        public UserMemoBuilder end(Timestamp end){
+        public UserMemoBuilder end(Date end){
             this.end=end;
             return this;
         }
@@ -91,7 +91,7 @@ public class UserMemoModel {
         public UserMemoModel build(){
             UserMemoModel userMemoModel=new UserMemoModel();
             userMemoModel.userId=this.userId;
-            userMemoModel.date=this.date;
+        //    userMemoModel.date=this.date;
             userMemoModel.start=this.start;
             userMemoModel.end=this.end;
             userMemoModel.memo=this.memo;

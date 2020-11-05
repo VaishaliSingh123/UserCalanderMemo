@@ -1,6 +1,8 @@
 package com.example.userCalanderShedule.controller;
 
 
+import com.example.userCalanderShedule.Sevice.MemoService;
+import com.example.userCalanderShedule.Sevice.UserService;
 import com.example.userCalanderShedule.exceptionHelper.InvalidInputException;
 import com.example.userCalanderShedule.exceptionHelper.UserException;
 import com.example.userCalanderShedule.model.UserModel;
@@ -11,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping(path = "/user/*")
@@ -20,19 +21,13 @@ public class UserController {
     @Autowired
     UserRepository userRepository;
 
-
+    @Autowired
+    UserService userService;
 
     @PostMapping(path = "create-user")
     public ResponseEntity<UserModel> createUser(@RequestBody UserModel userModel) throws UserException {
         try {
-            if(userModel.getName()==null||userModel.getCompany()==null){
-                throw new InvalidInputException("Invalid Input Exception");
-            }else {
-                UserModel userModel1 = new UserModel.UserModelBuilder().uuid(UUID.randomUUID().toString())
-                        .name(userModel.getName())
-                        .company(userModel.getCompany()).build();
-                return ResponseEntity.ok( userRepository.save(userModel1));
-            }
+            return ResponseEntity.ok(userService.createUserService(userModel));
         }catch (InvalidInputException ex){
             throw new InvalidInputException("Invalid Input Exception");
         }catch (Exception ex){
@@ -45,7 +40,7 @@ public class UserController {
     @GetMapping(path = "get-user")
     public ResponseEntity<List<UserModel>> fetchUserList() throws UserException {
         try {
-            return new ResponseEntity(userRepository.findAll(), HttpStatus.OK);
+            return new ResponseEntity(userService.getUserListService(), HttpStatus.OK);
 
         }catch (Exception ex){
             throw new UserException("User Exception");
@@ -61,7 +56,7 @@ public class UserController {
     @GetMapping(path="findBy-company")
     public ResponseEntity<List<UserModel>> findByCompany(@RequestHeader(value = "company")String company) throws UserException {
         try {
-            return new ResponseEntity(userRepository.findByCompany(company),HttpStatus.OK);
+            return new ResponseEntity(userService.getUserListByCompany(company),HttpStatus.OK);
 
         }catch (Exception ex){
             throw new UserException("User Exception");
